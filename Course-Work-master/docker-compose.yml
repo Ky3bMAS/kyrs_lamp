@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  system:
+    build:
+      context: system
+    depends_on:
+      - mysql
+    volumes:
+      - ./app:/var/www/html
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - php-env
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: "test_docker"
+      MYSQL_USER: "ezh1k"
+      MYSQL_PASSWORD: "alastor_cool"
+      MYSQL_ROOT_PASSWORD: "root"
+    volumes:
+      - "./db:/var/lib/mysql"
+    networks:
+      - php-env
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+      - "8001:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+    networks:
+      - php-env
+
+networks:
+  php-env:
+    driver: bridge
